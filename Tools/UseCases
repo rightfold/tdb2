@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Turn all use cases into HTML. The first argument is the directory to store
+# the HTML files in.
+
+find Source -type f -name 'UseCase.rst'                                     \
+    | xargs bash Tools/UseCase "$1"

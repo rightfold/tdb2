@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+# Turn a single use case into HTML. The first argument is the directory to
+# store the HTML file in. The second argument is the use case file. This
+# translates rST into HTML and appends links to relevant implementation
+# documentation.
+
+outdir="$1"
+infile="$2"
+
+(
+
+    cat "$infile"
+
+    echo
+    echo 'Implementation'
+    echo '--------------'
+    echo
+
+    find "$(dirname "$infile")" -maxdepth 1 -type f -name '*.hs'            \
+        | sed -r 's@^Source/@@                      # Drop the Source/ prefix.
+                  s@\.hs$@@                         # Drop the .hs suffix.
+                  s@/@-@g                           # Replace / with -.
+                  s@^(.*)$@`<../Haddock/\1.html>`_@ # Construct a hyperlink.
+                  s@^(.*)$@- \1@                    # Construct a list item.'
+
+) | rst2html.py > "$1/$(basename "$(dirname "$infile")").html"
